@@ -94,7 +94,7 @@ def invest_std(stock1, stock2, window):
 
     c, z, mean, std = get_para(log_ret_s1, log_ret_s2)
 
-
+    # Mean + Standard deviation trade
 
     for i in range(window, len(stock1)):
 
@@ -225,7 +225,7 @@ def invest_std(stock1, stock2, window):
     rate = (money / 1000000) - 1
     return money, rate, num_stock1, num_stock2, position, balance
 
-
+# Mean + Standard deviation * 2 trade
 def invest_std2(stock1, stock2, window):
     log_ret_s1 = stock1[:window]
     log_ret_s2 = stock2[:window]
