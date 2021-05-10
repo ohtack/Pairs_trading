@@ -75,9 +75,109 @@ def get_z(stock1, stock2, c):
     value_z = stock1 - (c * stock2)
     return value_z
 
+def closing_day (money, num_stock1, num_stock2, position, stock1, stock2 ,day, balance):
+
+    if position == 1:
+        moeny = money + (num_stock1 * stock1[day]) - (num_stock2 * stock2[day])
+        num_stock1 = 0
+        num_stock2 = 0
+        position = 0
+        balance.append(money)
+
+    elif position == 2:
+
+        money = money - (num_stock1 * stock1[day]) + (num_stock2 * stock2[day])
+        num_stock1 = 0
+        num_stock2 = 0
+        position = 0
+        balance.append(money)
+
+    return moeny, balance, num_stock1, num_stock2, position
+
+def position_0 (z_today, mean, c, std, std_multiple,num_stock1, num_stock2, money, stock1,stock2, day, balance):
+
+    if z_today <= mean - (std * std_multiple):
+        num_stock1 = math.floor(money / stock1[day])
+        num_stock2 = math.floor((num_stock1 * stock1[day]) * c) / stock2[day]
+        money = money - (num_stock1 * stock1[day]) + (num_stock2 * stock2[day])
+        position = 1
+
+        balance.append(money)
+
+        print('long position on ' + stock1.name + ' and short position on ' + stock2.name)
+        print('Money Balance: {}'.format(money))
+        print()
+
+    elif z_today >= mean + (std * std_multiple):
+        num_stock1 = math.floor(money / stock1[day])
+        num_stock2 = math.floor((num_stock1 * stock1[day]) * c) / stock2[day]
+        money = money + (num_stock1 * stock1[day]) - (num_stock2 * stock2[day])
+
+        position = 2
+        balance.append(money)
+
+        print('long position on ' + stock2.name + ' and short position on ' + stock1.name)
+        print('Money Balance: {}'.format(money))
+        print()
+
+    else:
+
+        position = 0
+        balance.append(money)
+
+        print('no trading')
+        print()
+
+    return money, balance, num_stock1, num_stock2, position
+
+def position_1 (z_today, mean, c, std, std_multiple,num_stock1, num_stock2, money, stock1,stock2, day, balance):
+
+    if z_today >= mean:
+
+        money = money + (num_stock1 * stock1[day]) - (num_stock2 * stock2[day])
+        num_stock1 = 0
+        num_stock2 = 0
+        position = 0
+        balance.append(money)
+
+        print('Closed position')
+        print('Money Balance: {}'.format(money))
+        print()
+
+    else:
+
+        position = 1
+        balance.append(money)
+
+        print('Hold position')
+        print()
+
+    return money, balance, num_stock1, num_stock2, position
+
+def position_2 (z_today, mean, c, std, std_multiple,num_stock1, num_stock2, money, stock1,stock2, day, balance):
+
+    if z_today <= mean:
+        money = money - (num_stock1 * stock1[day]) + (num_stock2 * stock2[day])
+        num_stock1 = 0
+        num_stock2 = 0
+        position = 0
+        balance.append(money)
+
+        print('Closed position')
+        print('Money Balance: {}'.format(money))
+        print()
+
+    else:
+        position = 2
+        balance.append(money)
+
+        print('Hold position')
+        print()
+
+    return money, balance, num_stock1, num_stock2, position
 
 
-def invest_std(stock1, stock2, window):
+def pairs_trade (stock1, stock2, window, std_multiple):
 
     log_ret_s1 = stock1[:window]
     log_ret_s2 = stock2[:window]
@@ -113,22 +213,15 @@ def invest_std(stock1, stock2, window):
             print('Closed position (Last day)')
             
             if position == 1:
-                
-                money = money + (num_stock1 * stock1[i]) - (num_stock2 * stock2[i])
-                num_stock1 = 0
-                num_stock2 = 0
-                position = 0
-                balance.append(money)
-             
+
+                moeny, balance, num_stock1, num_stock2, position  = closing_day(money, num_stock1, num_stock2, position,
+                                                                                stock1, stock2 , i, balance)
+
             elif position == 2:
-                
-                money = money - (num_stock1 * stock1[i]) + (num_stock2 * stock2[i])
-                num_stock1 = 0
-                num_stock2 = 0
-                position = 0
-                balance.append(money)
-                                
-            
+
+                moeny, balance, num_stock1, num_stock2, position = closing_day(money, num_stock1, num_stock2, position,
+                                                                               stock1, stock2, i, balance)
+
             print('Last Balance: {}'.format(money))
             print()
             
@@ -138,232 +231,30 @@ def invest_std(stock1, stock2, window):
 
             z_today = get_z(today_log1, today_log2, c)
 
-            if z_today <= mean - std:
-
-                num_stock1 = math.floor(money / stock1[i])
-                num_stock2 = math.floor((num_stock1 * stock1[i]) * c ) / stock2[i]
-                money = money - (num_stock1 * stock1[i]) + (num_stock2 * stock2[i])
-
-                position = 1
-                balance.append(money)
-
-                print('long position on '+stock1.name +' and short position on '+ stock2.name)
-                print('Money Balance: {}'.format(money))
-                print()
-
-            elif z_today >= mean + std:
-
-                num_stock1 = math.floor(money / stock1[i])
-                num_stock2 = math.floor((num_stock1 * stock1[i]) * c) / stock2[i]
-                money = money + (num_stock1 * stock1[i]) - (num_stock2 * stock2[i])
-
-                position = 2
-                balance.append(money)
-
-                print('long position on ' + stock2.name + ' and short position on ' + stock1.name)
-                print('Money Balance: {}'.format(money))
-                print()
-
-            else:
-                position = 0
-                balance.append(money)
-                
-                print('no trading')
-                print()
-
+            moeny, balance, num_stock1, num_stock2, position = position_0 (z_today, mean, c, std, std_multiple,
+                                                                           num_stock1, num_stock2, money,
+                                                                           stock1,stock2, i, balance)
 
 
         elif position == 1:
 
             z_today = get_z(today_log1, today_log2, c)
 
-            if z_today >= mean:
-
-                money = money + (num_stock1 * stock1[i]) - (num_stock2 * stock2[i])
-                num_stock1 = 0
-                num_stock2 = 0
-                position = 0
-                balance.append(money)
-
-                print('Closed position')
-                print('Money Balance: {}'.format(money))
-                print()
-
-            else:
-
-                position = 1
-                balance.append(money)
-                
-                print('Hold position')
-                print()
+            moeny, balance, num_stock1, num_stock2, position = position_1 (z_today, mean, c, std, std_multiple,
+                                                                           num_stock1, num_stock2, money,
+                                                                           stock1,stock2, i, balance)
 
 
         elif position == 2:
 
             z_today = get_z(today_log1, today_log2, c)
 
-            if z_today <= mean:
-                money = money - (num_stock1 * stock1[i]) + (num_stock2 * stock2[i])
-                num_stock1 = 0
-                num_stock2 = 0
-                position = 0
-                balance.append(money)
-
-                print('Closed position')
-                print('Money Balance: {}'.format(money))
-                print()
-
-            else:
-                position = 2
-                balance.append(money)
-                
-                print('Hold position')
-                print()
+            moeny, balance, num_stock1, num_stock2, position = position_2 (z_today, mean, c, std, std_multiple,
+                                                                           num_stock1, num_stock2, money,
+                                                                           stock1,stock2, i, balance)
     
     
 
     rate = (money / 1000000) - 1
     return money, rate, num_stock1, num_stock2, position, balance
 
-# Mean + Standard deviation * 2 trade
-def invest_std2(stock1, stock2, window):
-    log_ret_s1 = stock1[:window]
-    log_ret_s2 = stock2[:window]
-    log_ret_s1 = np.log(log_ret_s1) - np.log(log_ret_s1.shift(1))
-    log_ret_s2 = np.log(log_ret_s2) - np.log(log_ret_s2.shift(1))
-    log_ret_s1 = log_ret_s1.dropna()
-    log_ret_s2 = log_ret_s1.dropna()
-
-    money = 1000000
-    balance = []
-    position = 0
-    num_stock1 = 0
-    num_stock2 = 0
-
-    c, z, mean, std = get_para(log_ret_s1, log_ret_s2)
-
-    for i in range(window, len(stock1)):
-
-        today_s1 = stock1[i]
-        today_s2 = stock2[i]
-        yes_s1 = stock1[i - 1]
-        yes_s2 = stock2[i - 1]
-        today_log1 = np.log(today_s1) - np.log(yes_s1)
-        today_log2 = np.log(today_s2) - np.log(yes_s2)
-
-        print('Date: ' + str(datetime.strftime(stock1.keys()[i], "%Y-%m-%d")))
-        print()
-
-        if i == (len(stock1) - 1):
-
-            print('Closed position (Last day)')
-
-            if position == 1:
-
-                money = money + (num_stock1 * stock1[i]) - (num_stock2 * stock2[i])
-                num_stock1 = 0
-                num_stock2 = 0
-                position = 0
-                balance.append(money)
-
-            elif position == 2:
-
-                money = money - (num_stock1 * stock1[i]) + (num_stock2 * stock2[i])
-                num_stock1 = 0
-                num_stock2 = 0
-                position = 0
-                balance.append(money)
-
-            print('Last Balance: {}'.format(money))
-            print()
-
-            continue
-
-        if position == 0:
-
-            z_today = get_z(today_log1, today_log2, c)
-
-            if z_today <= mean - (2 * std):
-
-                num_stock1 = math.floor(money / stock1[i])
-                num_stock2 = math.floor((num_stock1 * stock1[i]) * c) / stock2[i]
-                money = money - (num_stock1 * stock1[i]) + (num_stock2 * stock2[i])
-
-                position = 1
-                balance.append(money)
-
-                print('long position on ' + stock1.name + ' and short position on ' + stock2.name)
-                print('Money Balance: {}'.format(money))
-                print()
-
-            elif z_today >= mean + (2 * std):
-
-                num_stock1 = math.floor(money / stock1[i])
-                num_stock2 = math.floor((num_stock1 * stock1[i]) * c) / stock2[i]
-                money = money + (num_stock1 * stock1[i]) - (num_stock2 * stock2[i])
-
-                position = 2
-                balance.append(money)
-
-                print('long position on ' + stock2.name + ' and short position on ' + stock1.name)
-                print('Money Balance: {}'.format(money))
-                print()
-
-            else:
-                position = 0
-                balance.append(money)
-
-                print('no trading')
-                print()
-
-
-
-        elif position == 1:
-
-            z_today = get_z(today_log1, today_log2, c)
-
-            if z_today >= mean:
-
-                money = money + (num_stock1 * stock1[i]) - (num_stock2 * stock2[i])
-                num_stock1 = 0
-                num_stock2 = 0
-                position = 0
-                balance.append(money)
-
-                print('Closed position')
-                print('Money Balance: {}'.format(money))
-                print()
-
-            else:
-
-                position = 1
-                balance.append(money)
-
-                print('Hold position')
-                print()
-
-
-        elif position == 2:
-
-            z_today = get_z(today_log1, today_log2, c)
-
-            if z_today <= mean:
-                money = money - (num_stock1 * stock1[i]) + (num_stock2 * stock2[i])
-                num_stock1 = 0
-                num_stock2 = 0
-                position = 0
-                balance.append(money)
-
-                print('Closed position')
-                print('Money Balance: {}'.format(money))
-                print()
-
-            else:
-                position = 2
-                balance.append(money)
-
-                print('Hold position')
-                print()
-
-    rate = (money / 1000000) - 1
-    return money, rate, num_stock1, num_stock2, position, balance
