@@ -108,7 +108,7 @@ def position_0 (z_today, mean, c, std, std_multiple,num_stock1, num_stock2, mone
         balance.append(money)
 
         print('long position on ' + stock1.name + ' and short position on ' + stock2.name)
-        print('Money Balance: {}'.format(money))
+        print('Money Balance: ${}'.format(money))
         print()
 
     elif z_today >= mean + (std * std_multiple):
@@ -120,7 +120,7 @@ def position_0 (z_today, mean, c, std, std_multiple,num_stock1, num_stock2, mone
         balance.append(money)
 
         print('long position on ' + stock2.name + ' and short position on ' + stock1.name)
-        print('Money Balance: {}'.format(money))
+        print('Money Balance: ${}'.format(money))
         print()
 
     else:
@@ -144,7 +144,7 @@ def position_1 (z_today, mean, c, std, std_multiple,num_stock1, num_stock2, mone
         balance.append(money)
 
         print('Closed position')
-        print('Money Balance: {}'.format(money))
+        print('Money Balance: ${}'.format(money))
         print()
 
     else:
@@ -167,7 +167,7 @@ def position_2 (z_today, mean, c, std, std_multiple,num_stock1, num_stock2, mone
         balance.append(money)
 
         print('Closed position')
-        print('Money Balance: {}'.format(money))
+        print('Money Balance: ${}'.format(money))
         print()
 
     else:
@@ -225,7 +225,7 @@ def pairs_trade (stock1, stock2, window, std_multiple):
                 money, balance, num_stock1, num_stock2, position = closing_day(money, num_stock1, num_stock2, position,
                                                                                stock1, stock2, i, balance)
 
-            print('Last Balance: {}'.format(money))
+            print('Last Balance: ${}'.format(money))
             print()
             
             continue
