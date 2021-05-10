@@ -78,7 +78,7 @@ def get_z(stock1, stock2, c):
 def closing_day (money, num_stock1, num_stock2, position, stock1, stock2 ,day, balance):
 
     if position == 1:
-        moeny = money + (num_stock1 * stock1[day]) - (num_stock2 * stock2[day])
+        money = money + (num_stock1 * stock1[day]) - (num_stock2 * stock2[day])
         num_stock1 = 0
         num_stock2 = 0
         position = 0
@@ -92,7 +92,7 @@ def closing_day (money, num_stock1, num_stock2, position, stock1, stock2 ,day, b
         position = 0
         balance.append(money)
 
-    return moeny, balance, num_stock1, num_stock2, position
+    return money, balance, num_stock1, num_stock2, position
 
 def position_0 (z_today, mean, c, std, std_multiple,num_stock1, num_stock2, money, stock1,stock2, day, balance):
 
@@ -214,12 +214,12 @@ def pairs_trade (stock1, stock2, window, std_multiple):
             
             if position == 1:
 
-                moeny, balance, num_stock1, num_stock2, position  = closing_day(money, num_stock1, num_stock2, position,
+                money, balance, num_stock1, num_stock2, position  = closing_day(money, num_stock1, num_stock2, position,
                                                                                 stock1, stock2 , i, balance)
 
             elif position == 2:
 
-                moeny, balance, num_stock1, num_stock2, position = closing_day(money, num_stock1, num_stock2, position,
+                money, balance, num_stock1, num_stock2, position = closing_day(money, num_stock1, num_stock2, position,
                                                                                stock1, stock2, i, balance)
 
             print('Last Balance: {}'.format(money))
@@ -231,7 +231,7 @@ def pairs_trade (stock1, stock2, window, std_multiple):
 
             z_today = get_z(today_log1, today_log2, c)
 
-            moeny, balance, num_stock1, num_stock2, position = position_0 (z_today, mean, c, std, std_multiple,
+            money, balance, num_stock1, num_stock2, position = position_0 (z_today, mean, c, std, std_multiple,
                                                                            num_stock1, num_stock2, money,
                                                                            stock1,stock2, i, balance)
 
@@ -240,7 +240,7 @@ def pairs_trade (stock1, stock2, window, std_multiple):
 
             z_today = get_z(today_log1, today_log2, c)
 
-            moeny, balance, num_stock1, num_stock2, position = position_1 (z_today, mean, c, std, std_multiple,
+            money, balance, num_stock1, num_stock2, position = position_1 (z_today, mean, c, std, std_multiple,
                                                                            num_stock1, num_stock2, money,
                                                                            stock1,stock2, i, balance)
 
@@ -249,7 +249,7 @@ def pairs_trade (stock1, stock2, window, std_multiple):
 
             z_today = get_z(today_log1, today_log2, c)
 
-            moeny, balance, num_stock1, num_stock2, position = position_2 (z_today, mean, c, std, std_multiple,
+            money, balance, num_stock1, num_stock2, position = position_2 (z_today, mean, c, std, std_multiple,
                                                                            num_stock1, num_stock2, money,
                                                                            stock1,stock2, i, balance)
     
