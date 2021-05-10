@@ -5,6 +5,8 @@ from statsmodels.tsa import arima_model
 import math
 from datetime import datetime
 
+
+# Return the most cointegrated table
 def find_cointegrated_pairs(data):
     n = data.shape[1]
     score_matrix = np.zeros((n, n))
@@ -57,6 +59,7 @@ def find_cointegrated_pairs(data):
     return score_matrix, pvalue_matrix, pair_pvalue, pairs
 
 
+# Return the hedge ratio
 def get_para(stock1, stock2):
 
     stock1 = stock1.dropna()
@@ -70,7 +73,7 @@ def get_para(stock1, stock2):
 
     return c, z, mean, std
 
-
+# Return
 def get_z(stock1, stock2, c):
     value_z = stock1 - (c * stock2)
     return value_z
