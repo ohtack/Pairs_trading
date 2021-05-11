@@ -82,20 +82,14 @@ def closing_day (money, num_stock1, num_stock2, position, stock1, stock2 ,day, b
 
     if position == 1:
         money = money + (num_stock1 * stock1[day]) - (num_stock2 * stock2[day])
-        num_stock1 = 0
-        num_stock2 = 0
-        position = 0
         balance.append(money)
 
     elif position == 2:
 
         money = money - (num_stock1 * stock1[day]) + (num_stock2 * stock2[day])
-        num_stock1 = 0
-        num_stock2 = 0
-        position = 0
         balance.append(money)
 
-    return money, balance, num_stock1, num_stock2, position
+    return money, balance, 0, 0, 0
 
 def position_0 (z_today, mean, c, std, std_multiple,num_stock1, num_stock2, money, stock1,stock2, day, balance):
 
